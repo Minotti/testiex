@@ -26,11 +26,11 @@ class PainelController extends Controller
         $quote = $this->iex->quote($symbol);
         $range = $this->rqt->range ?? '1m';
 
-        $history = collect($this->iex->history($symbol, $range));
-        $history = $history->sortByDesc('date');
+        $history = $this->iex->history($symbol, $range);
+        $data = $history;
 
         if($quote['code'] == 200)
-            return view('painel.quote', compact('quote', 'history'));
+            return view('painel.quote', compact('quote', 'history', 'data'));
 
         return back()->withErrors($quote['message']);
     }

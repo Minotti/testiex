@@ -54,6 +54,13 @@
 
                     <button class="btn btn-primary">Apply</button>
                 </form>
+            </div>
+
+            <div class="col-md-12">
+                <div id="chartContainer" style="height: 300px; width: 100%; margin-bottom: 20px;"></div>
+            </div>
+
+            <div class="col-md-8">
                 <table class="table mt-4 table-hover">
                     <thead class="thead-dark">
                         <tr>
@@ -81,4 +88,88 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+    <script>
+        let dataa = JSON.parse('{!! $data !!}');
+
+        var openn = [];
+        var closee = [];
+
+        $.each(dataa, function(k, v){
+            openn.push({x: new Date(v.date), y: v.open})
+            closee.push({x: new Date(v.date), y: v.close})
+        });
+
+        function getMinY() {
+            var min_o = openn.reduce((min, p) => p.y < min ? p.y : min, openn[0].y);
+            var min_c = closee.reduce((min, p) => p.y < min ? p.y : min, closee[0].y);
+
+            return Math.min(min_c, min_o) - 10;
+        }
+
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            theme: "light2",
+            title:{
+                text: "Historical Prices"
+            },
+            axisX:{
+                valueFormatString: "DD MMM",
+                crosshair: {
+                    enabled: true,
+                    snapToDataPoint: true
+                }
+            },
+            axisY: {
+                title: "Value (USD)",
+                minimum: getMinY(),
+                crosshair: {
+                    enabled: true
+                }
+            },
+            toolTip:{
+                shared:true
+            },
+            legend:{
+                cursor:"pointer",
+                verticalAlign: "bottom",
+                horizontalAlign: "left",
+                dockInsidePlotArea: true,
+                itemclick: toogleDataSeries
+            },
+            data: [{
+                type: "line",
+                showInLegend: true,
+                name: "Close",
+                markerType: "square",
+                xValueFormatString: "DD MMM, YYYY",
+                color: "#F08080",
+                dataPoints: closee
+
+            },
+            {
+                type: "line",
+                showInLegend: true,
+                name: "Open",
+                lineDashType: "dash",
+                dataPoints: openn
+
+            }]
+        });
+
+        chart.render();
+
+        function toogleDataSeries(e){
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else{
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    </script>
 @endsection

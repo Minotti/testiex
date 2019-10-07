@@ -57,6 +57,8 @@ class IEXRepository
                 $historical_prices = json_decode($historical_prices);
             }
 
+            $historical_prices = collect($historical_prices);
+            $historical_prices = $historical_prices->sortByDesc('date');
             return $historical_prices;
         } catch (\Exception $e){
             if($e->getCode() == 404){
