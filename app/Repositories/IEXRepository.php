@@ -3,14 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\HistoricalPrices;
-use App\Models\SearchesHistoricalPrices;
 use GuzzleHttp\Client;
 
 class IEXRepository
 {
     private $client;
     private $sandbox = 'https://sandbox.iexapis.com';
-    private $production = 'https://sandbox.iexapis.com';
+    private $production = 'https://cloud.iexapis.com';
     private $url;
     private $token;
 
@@ -19,10 +18,11 @@ class IEXRepository
         $this->client = new Client();
         $this->token = env('IEX_TOKEN');
 
-        if(env('IEX_SANDBOX'))
+        if(env('IEX_SANDBOX')) {
             $this->url = $this->sandbox;
-        else
+        } else {
             $this->url = $this->production;
+        }
     }
 
     public function quote($symbol)
