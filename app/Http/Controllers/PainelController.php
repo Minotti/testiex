@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\IEXRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PainelController extends Controller
@@ -25,12 +26,13 @@ class PainelController extends Controller
         $symbol = $this->rqt->symbol;
         $quote = $this->iex->quote($symbol);
         $range = $this->rqt->range ?? '1m';
+        $news = $this->iex->news($symbol);
 
         $history = $this->iex->history($symbol, $range);
         $data = $history;
 
         if($quote['code'] == 200)
-            return view('painel.quote', compact('quote', 'history', 'data'));
+            return view('painel.quote', compact('quote', 'history', 'data', 'news'));
 
         return back()->withErrors($quote['message']);
     }

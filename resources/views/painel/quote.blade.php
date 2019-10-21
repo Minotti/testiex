@@ -60,6 +60,13 @@
                 <div id="chartContainer" style="height: 300px; width: 100%; margin-bottom: 20px;"></div>
             </div>
 
+            <div class="col-md-12">
+                <h3 class="text-center">News</h3>
+                <p>{{$news->headline}} | {{$news->datetime}}</p>
+                <span>{!! $news->summary !!}</span>
+                <a href="{{$news->url}}" target="_blank">Learn more</a>
+            </div>
+
             <div class="col-md-8">
                 <table class="table mt-4 table-hover">
                     <thead class="thead-dark">

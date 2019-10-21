@@ -67,4 +67,26 @@ class IEXRepository
             return ['code' => $e->getCode(), 'message' => 'Não foi possível concluir a busca.'];
         }
     }
+
+    public function news($symbol)
+    {
+        try{
+            $uri = "/stable/stock/$symbol/news/last/1";
+            $r = $this->client->get($uri."?token=".env('IEX_TOKEN'), ['base_uri' => $this->url]);
+            $result = $r->getBody()->getContents();
+            $result = json_decode($result)[0];
+            $result->datetime = $this->dateFromEpoch($result->datetime);
+
+            return $result;
+        }catch(\Exception $e){
+            dd($e);
+        }
+    }
+
+    public function dateFromEpoch($mill)
+    {
+        $seconds = $mill / 1000;
+        $date = date("d-m-Y H:i:s", $seconds);
+        return $date;
+    }
 }
